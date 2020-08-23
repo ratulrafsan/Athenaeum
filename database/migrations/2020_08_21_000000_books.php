@@ -20,6 +20,10 @@ class Books extends Migration
             $table->string('language');
             $table->string('publisher');
             $table->string('location');
+
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

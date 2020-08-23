@@ -16,13 +16,19 @@ class AuthorTable extends Migration
         Schema::create('authors', function (Blueprint $table) {
            $table->bigIncrements('id');
            $table->string('author');
-           $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
 
         Schema::create('book_authors', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('author_id');
             $table->unsignedBigInteger('book_id');
+
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
 
             $table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade')->onUpdate('cascade');
