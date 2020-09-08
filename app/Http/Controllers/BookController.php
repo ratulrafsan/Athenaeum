@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Book;
 use App\BookAuthor;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use function Sodium\add;
@@ -20,6 +21,7 @@ class BookController extends Controller
 
         $searchResult = Book::query()->select(
             [
+                'books.id',
                 'books.title',
                 'books.publisher',
                 'books.isbn',
@@ -55,5 +57,90 @@ class BookController extends Controller
         }
 
         return $convertedResult;
+    }
+
+    public function addBook(Request $request) {
+        $request->validate([
+           'title' => 'string|required',
+           'isbn' => 'string|sometimes',
+           'author' => 'array|required',
+           'category' => 'array|required',
+           'language' => 'string|sometimes',
+            'publisher' => 'string|sometimes',
+            'location' => 'string|required'
+        ]);
+
+        $toReturn = null;
+
+        DB::transaction(function () use ($request, &$toReturn) {
+            $toReturn = Book::create([
+                'title' => $request->title,
+                'isbn' => $request->isbn,
+                'language' => $request->language,
+                'location' => $request->location,
+                'publisher' => $request->publisher
+            ]);
+
+            $toReturn->author()->sync($request->author);
+            $toReturn->categories()->sync($request->category);
+        });
+
+        if($toReturn != null) {
+            $author = $toReturn->author()->get();
+            $category = $toReturn->categories()->get();
+
+            $book = $toReturn->toArray();
+            $book['author'] = $author;
+            $book['category'] = $category;
+        }
+
+        return $toReturn != null ? $this->success('Operation Successful', ['book' => $book]):
+            $this->err('Book could not be added');
+    }
+
+    public function editBook(Request $request) {
+        $request->validate([
+            'id' => 'required',
+            'title' => 'string|sometimes',
+            'isbn' => 'string|sometimes',
+            'author' => 'array|required',
+            'category' => 'array|required',
+            'language' => 'string|sometimes',
+            'publisher' => 'string|sometimes',
+            'location' => 'string|sometimes'
+        ]);
+
+        $targetBook = Book::findOrFail($request->id);
+        $updateStatus = null;
+
+        DB::transaction(function () use ($request, &$targetBook, &$updateStatus) {
+            $targetBook->author()->sync($request->author);
+            $targetBook->categories()->sync($request->category);
+
+            $updateStatus = $targetBook->update($request->all());
+        });
+
+
+        return $updateStatus ? $this->success('Operation success', ['book' => $targetBook]) :
+            $this->err('Book could not be updated');
+    }
+
+    public function deleteBook(Request $request) {
+        $request->validate([
+            'id' => 'required'
+        ]);
+
+        $targetBook = Book::findOrFail($request->id);
+        $deleteStatus = null;
+
+        DB::transaction(function () use ($request, &$targetBook, &$deleteStatus) {
+            $targetBook->author()->detach();
+            $targetBook->categories()->detach();
+
+            $deleteStatus = $targetBook->delete();
+        });
+
+        return $deleteStatus ? $this->success('Operation success', ['book' => null]) :
+            $this->err('Book could not be deleted');
     }
 }

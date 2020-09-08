@@ -1,4 +1,5 @@
 import mutationTypes from './mutation-types';
+import getterTypes from './getter-types';
 import {V1API} from '../http/APIPath'
 import axios from '../http/axios';
 
@@ -12,7 +13,10 @@ export default {
         newCategoryProcessing: false,
         newCategoryError: false,
     },
-    getters: {},
+    getters: {
+        [getterTypes.CATEGORY_DATA_PROCESSING]: state => state.loadProcessing,
+        [getterTypes.CATEGORY_DATA]: state => state.categories,
+    },
     mutations: {
         [mutationTypes.CATEGORY_SET_DATA] (state, payload) {
             state.categories = payload;

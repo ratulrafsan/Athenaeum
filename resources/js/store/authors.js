@@ -1,4 +1,5 @@
 import mutationTypes from './mutation-types';
+import getterTypes from './getter-types';
 import {V1API} from '../http/APIPath'
 import axios from '../http/axios';
 
@@ -12,7 +13,10 @@ export default {
         newAuthorProcessing: false,
         newAuthorError: false,
     },
-    getters: {},
+    getters: {
+        [getterTypes.AUTHOR_DATA_PROCESSING]: state => state.loadProcessing,
+        [getterTypes.AUTHOR_DATA]: state => state.authors,
+    },
     mutations: {
         [mutationTypes.AUTHOR_SET_DATA] (state, payload) {
             state.authors = payload;

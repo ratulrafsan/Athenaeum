@@ -24,7 +24,10 @@ Route::post('/login', 'API\AuthController@login');
 Route::middleware('auth:api')->group(function() {
     Route::post('/logout', 'API\AuthController@logout');
 
-    Route::post('/books', 'BookController@searchBook');
+    Route::post('/book/search', 'BookController@searchBook');
+    Route::post('/book', 'BookController@addBook');
+    Route::put('/book', 'BookController@editBook');
+    Route::delete('/book', 'BookController@deleteBook');
 
     Route::get('/category', 'CategoryController@index');
     Route::post('/category', 'CategoryController@add');

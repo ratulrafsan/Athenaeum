@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import moduleTypes from './module-types';
 
 Vue.use(Vuex);
 
@@ -15,11 +16,11 @@ export default new Vuex.Store({
     state: {},
     actions: {},
     modules: {
-        auth: moduleAuth,
+        [moduleTypes.AUTH]: moduleAuth,
         user: moduleUser,
-        book: moduleBook,
-        category: moduleCategory,
-        author: moduleAuthor
+        [moduleTypes.BOOK]: moduleBook,
+        [moduleTypes.CATEGORY]: moduleCategory,
+        [moduleTypes.AUTHOR]: moduleAuthor
     },
 
     strict: process.env.NODE_ENV !== 'production'

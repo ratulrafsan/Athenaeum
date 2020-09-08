@@ -120,12 +120,16 @@
 
                                         <v-btn
                                             text
-                                            color="red">
+                                            color="red"
+                                            @click="$store.dispatch(
+                                                require('../store/action-types').default.delete_book,
+                                                {id: item.id}
+                                                )"
+                                        >
                                             Delete
                                         </v-btn>
                                     </v-card-actions>
                                 </v-card>
-
                             </div>
                         </template>
                     </v-data-iterator>
@@ -135,6 +139,27 @@
                 </div>
             </v-row>
         </v-container>
+
+        <v-dialog
+            v-model="deleteBookProcessing"
+            hide-overlay
+            persistent
+            width="300"
+        >
+            <v-card
+                color="primary"
+                dark
+            >
+                <v-card-text>
+                    Please wait
+                    <v-progress-linear
+                        indeterminate
+                        color="white"
+                        class="mb-0"
+                    ></v-progress-linear>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
 
     </v-main>
 </template>
@@ -147,7 +172,7 @@
         name: "Home",
 
         computed: {
-            ...mapGetters('book', ["noBooks", 'shouldDisplayResult', 'books']),
+            ...mapGetters('book', ["noBooks", 'shouldDisplayResult', 'books', 'deleteBookProcessing']),
 
             query : {
                 get() {
