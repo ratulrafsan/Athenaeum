@@ -5,6 +5,8 @@
 @import 'variables';
 
 // Bootstrap
-@import '~bootstrap/scss/bootstrap';
+//@import '~bootstrap/scss/bootstrap';
 
-@import 'node_modules/bootstrap-vue/src/index.scss';
+// Vuetify
+@import '~vuetify/dist/vuetify.min.css';
+@import "~@mdi/font/css/materialdesignicons.min.css";
