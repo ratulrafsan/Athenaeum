@@ -9,6 +9,7 @@ import moduleBook from './books';
 import moduleCategory from './category';
 import moduleAuthor from './authors';
 import moduleAuth from './auth';
+import moduleUsers from './users';
 
 export default new Vuex.Store({
     getters: {},
@@ -17,8 +18,9 @@ export default new Vuex.Store({
     actions: {},
     modules: {
         [moduleTypes.AUTH]: moduleAuth,
-        user: moduleUser,
+        [moduleTypes.USER] : moduleUser,
         [moduleTypes.BOOK]: moduleBook,
+        [moduleTypes.USERS] : moduleUsers,
         [moduleTypes.CATEGORY]: moduleCategory,
         [moduleTypes.AUTHOR]: moduleAuthor
     },

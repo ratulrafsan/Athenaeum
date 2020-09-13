@@ -1,5 +1,6 @@
 export default {
     'LocalStorageKeys' : {
-        'TOKEN' : 'token'
+        'TOKEN' : 'token',
+        'USER' : 'user'
     }
 }

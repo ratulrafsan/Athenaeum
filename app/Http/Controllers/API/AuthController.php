@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use phpseclib\Crypt\Hash;
 
 class AuthController extends Controller
 {
@@ -22,13 +23,35 @@ class AuthController extends Controller
     }
 
     public function register(Request $request) {
-        // return 404;
+        $request->validate([
+            'email' => 'required',
+            'password' => 'string|required',
+            'role' => 'numeric',
+            'name' => 'string|required',
+        ]);
+
+
+        //get the current user
+        $user = Auth::user();
+
+
+        // Only allow Admin users to create new users
+        if($user->role !== 1) {
+            return $this->err("Only admin users are allowed to create new accounts");
+        }
+
+        $input = $request->all();
+        $input['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+
+        $user = User::create($input);
+
+        return response()->json(array_merge($this->generateToken($user), ['user'=> $user]));
     }
 
     public function login(Request $request) {
         $request->validate([
             'email' => 'exists:users,email|required',
-            'password' => 'string|required'
+            'password' => 'string|required',
         ]);
 
         if(Auth::attempt($request->only('email', 'password'))) {

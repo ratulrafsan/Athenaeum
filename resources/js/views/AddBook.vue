@@ -1,28 +1,13 @@
 <template>
     <v-main class="custom-bg-color-gray fill-height">
-        <v-toolbar color="success" flat>
-            <v-toolbar-title> logo here</v-toolbar-title>
 
-            <v-spacer/>
-
-            <v-btn class="font-weight-light" text x-large :to="require('../routes/namedRoutes').default.addBook">
-                Add Book
-            </v-btn>
-
-            <v-btn class="font-weight-light" text x-large>
-                Users
-            </v-btn>
-
-            <v-btn class="font-weight-light" text x-large @click="this.$store.dispatch(require('../store/action-types').default.logout)">
-                Logout
-            </v-btn>
-        </v-toolbar>
+        <toolbar/>
 
         <v-container>
             <v-card elevation="1" class="mt-10 mx-md-12">
-                <v-card-title> {{book ? 'Edit' : 'Add'}} Books </v-card-title>
+                <v-card-title> {{book ? 'Edit' : 'Add'}} Book </v-card-title>
                 <v-card-text>
-                    <v-form @submit.prevent="book ? updateBook : submitBook">
+                    <v-form @submit.prevent="submitBook">
                         <v-row class="mx-1">
                             <v-text-field label="Book Title" v-model="payload.title"/>
                         </v-row>
@@ -103,14 +88,34 @@
 
                         <v-card-actions>
                             <v-spacer/>
-                            <v-btn color="primary" type="submit" @click="submitBook">
+                            <v-btn color="primary" type="submit" @click="submitBook" :loading="this[getters.BOOK_NEW_PROCESSING] || this[getters.BOOK_UPDATE_PROCESSING]">
                                 Submit
+                            </v-btn>
+
+                            <v-btn color="warning" @click="resetForm">
+                                Reset Form
                             </v-btn>
                         </v-card-actions>
                     </v-form>
                 </v-card-text>
             </v-card>
         </v-container>
+
+        <v-snackbar
+            v-model="displaySuccessSnackbar"
+            color="primary"
+            right
+            :timeout="$store.state.book.notificationTimeout"
+        >
+            Operation completed successfully
+        </v-snackbar>
+
+        <v-snackbar
+            v-model="displayErrorSnackbar"
+            color="red" right :timeout="$store.state.book.notificationTimeout">
+            Operation failed..
+        </v-snackbar>
+
     </v-main>
 </template>
 
@@ -120,10 +125,11 @@
     import moduleTypes from '../store/module-types';
     import actionTypes from '../store/action-types';
     import auth from "../store/auth";
+    import Toolbar from "../components/toolbar";
 
     export default {
         name: "AddBook",
-
+        components: {Toolbar},
         props: {
             book: undefined
         },
@@ -141,7 +147,28 @@
         computed: {
             ...mapGetters(moduleTypes.AUTHOR, [namedGetters.AUTHOR_DATA_PROCESSING, namedGetters.AUTHOR_DATA]),
             ...mapGetters(moduleTypes.CATEGORY, [namedGetters.CATEGORY_DATA_PROCESSING, namedGetters.CATEGORY_DATA]),
-            getters: () => require('../store/getter-types')
+            ...mapGetters(moduleTypes.BOOK, [namedGetters.BOOK_UPDATE_SUCCESS, namedGetters.BOOK_UPDATE_PROCESSING,
+                namedGetters.BOOK_NEW_SUCCESS, namedGetters.BOOK_NEW_PROCESSING, namedGetters.BOOK_NEW_ERROR,
+                namedGetters.BOOK_UPDATE_ERROR
+                ]),
+            getters: () => require('../store/getter-types'),
+            displaySuccessSnackbar: {
+                get() {
+                    return this[namedGetters.BOOK_NEW_SUCCESS] || this[namedGetters.BOOK_UPDATE_SUCCESS];
+                },
+
+                set(val) {
+                    // nothing
+                }
+            },
+            displayErrorSnackbar: {
+                get() {
+                    return this[namedGetters.BOOK_NEW_ERROR] || this[namedGetters.BOOK_UPDATE_ERROR];
+                },
+                set(val) {
+                    //nothing
+                }
+            }
         },
 
         data() {
@@ -160,6 +187,8 @@
                 categories: [],
                 shelf: undefined,
                 row: undefined,
+
+                drawer: null
             }
         },
 
@@ -178,6 +207,8 @@
 
                 this.authors = [];
                 this.categories = [];
+                this.shelf =  undefined;
+                this.row = undefined;
             },
 
             loadPayloadFromProp(){
@@ -211,14 +242,15 @@
             submitBook() {
                 this.payload.location = `Shelf: ${this.shelf}, Row: ${this.row}`;
                 this.payload.author = this.authors;
-                this.payload.category = this.categories
+                this.payload.category = this.categories;
 
-                this.$store.dispatch(actionTypes.add_book, this.payload);
+                if(!this.book) {
+                    this.$store.dispatch(actionTypes.add_book, this.payload);
+                } else {
+                    this.$store.dispatch(actionTypes.update_book, this.payload);
+                }
             },
 
-            updateBook() {
-                console.log('update book called')
-            }
         }
     }
 </script>

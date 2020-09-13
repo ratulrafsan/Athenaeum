@@ -2,6 +2,9 @@ const mix = require('laravel-mix');
 require('vuetifyjs-mix-extension')
 
 mix.webpackConfig({
+    optimization: {
+        sideEffects: false
+    },
     resolve: {
         extensions: ['.js', '.vue'],
         alias: {

@@ -37,7 +37,9 @@ export default {
                     password: payload.password
                 });
 
-                // TODO: Set user
+                commit('user/setRole', response.data['user']['role'], { root: true })
+                // save user object in local storage
+                localStorage.setItem(constants.LocalStorageKeys.USER, JSON.stringify(response.data['user']));
 
                 // save the token in local storage
                 localStorage.setItem(
@@ -62,13 +64,12 @@ export default {
         },
 
         async logout() {
-            // TODO: Invalidate existing query
+            localStorage.removeItem(constants.LocalStorageKeys.USER);
             localStorage.removeItem(constants.LocalStorageKeys.TOKEN);
-
             // redirect user back to login page
             // If we are already on the login page then do nothing
             if(router.history.current.name !== namedRoutes.login) {
-                router.push({name: namedRoutes.login, query: {to: router.history.current.fullPath}}).catch(e=>console.log(e));
+                router.push({name: 'login', query: {to: router.history.current.fullPath}}).catch(e=>console.log(e));
             }
         }
     }

@@ -2,23 +2,7 @@
     <v-main class="custom-bg-color-gray fill-height">
         <span class="bg d-none d-sm-none d-md-flex"></span>
 
-        <v-toolbar color="success" flat>
-            <v-toolbar-title> logo here</v-toolbar-title>
-
-            <v-spacer/>
-
-            <v-btn class="font-weight-light" text x-large :to="require('../routes/namedRoutes').default.addBook">
-                Add Book
-            </v-btn>
-
-            <v-btn class="font-weight-light" text x-large>
-                Users
-            </v-btn>
-
-            <v-btn class="font-weight-light" text x-large @click="$store.dispatch(require('../store/action-types').default.logout)">
-                Logout
-            </v-btn>
-        </v-toolbar>
+        <toolbar/>
 
         <v-container>
             <v-row justify="start">
@@ -110,22 +94,24 @@
                                         </v-card-text>
                                     </v-card-text>
                                     <v-divider/>
-                                    <v-card-actions>
+                                    <v-card-actions v-if="$store.getters['user/isAdmin']">
                                         <v-spacer></v-spacer>
                                         <v-btn
                                             text
-                                            color="primary">
+                                            color="primary"
+                                        @click="$router.push({
+                                        name: 'add_book',
+                                        params: {
+                                            book: item
+                                        }
+                                        })">
                                             Edit
                                         </v-btn>
 
                                         <v-btn
                                             text
                                             color="red"
-                                            @click="$store.dispatch(
-                                                require('../store/action-types').default.delete_book,
-                                                {id: item.id}
-                                                )"
-                                        >
+                                            @click="showDeleteDialogue(item)">
                                             Delete
                                         </v-btn>
                                     </v-card-actions>
@@ -140,16 +126,38 @@
             </v-row>
         </v-container>
 
+<!--        delete confirm-->
+        <v-dialog v-model="enableDeleteDialogue" max-width="300">
+            <v-card>
+                <v-card-title class="headline">
+                    Delete Confirmation
+                </v-card-title>
+
+                <v-card-text>
+                    Are you sure you want to <span class="red--text"> delete </span> the book titled
+                    <i>{{ deleteCandidate ? deleteCandidate.title : ''}}</i> ?
+                </v-card-text>
+
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="red" text @click="performDelete">
+                        Yes
+                    </v-btn>
+                    <v-btn color="primary" text @click="closeDeleteDialogue">
+                        No
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+<!--        delete loader-->
         <v-dialog
             v-model="deleteBookProcessing"
             hide-overlay
             persistent
-            width="300"
-        >
+            width="300">
             <v-card
                 color="primary"
-                dark
-            >
+                dark>
                 <v-card-text>
                     Please wait
                     <v-progress-linear
@@ -166,11 +174,13 @@
 
 <script>
     import namedMutations from '../store/named-mutations';
+    import namedActions from '../store/action-types';
     import { mapGetters } from "vuex";
+    import Toolbar from "../components/toolbar";
 
     export default {
         name: "Home",
-
+        components: {Toolbar},
         computed: {
             ...mapGetters('book', ["noBooks", 'shouldDisplayResult', 'books', 'deleteBookProcessing']),
 
@@ -194,14 +204,30 @@
                     sortDec: false,
                     sortBy: 'name',
                     sortKeys: ['Title', 'Publisher', 'ISBN', 'Language', 'Location', 'Author', 'Category']
-                }
+                },
+
+                enableDeleteDialogue: false,
+                deleteCandidate: undefined,
+
+                drawer: null
             }
         },
 
         methods: {
-            aggregateAuthorNames(authors) {
-                let authorNames = authors.map(e=>e.author);
-                return authorNames.join(', ');
+            aggregateAuthorNames: (authors) => (authors.map(e=>e.author)).join(', '),
+            showDeleteDialogue(payload) {
+                this.deleteCandidate = payload;
+                this.enableDeleteDialogue = true;
+            },
+            closeDeleteDialogue() {
+                this.deleteCandidate = undefined;
+                this.enableDeleteDialogue = false;
+            },
+            performDelete() {
+                if(this.deleteCandidate){
+                    this.$store.dispatch(namedActions.delete_book, this.deleteCandidate);
+                }
+                this.closeDeleteDialogue();
             }
         }
     }

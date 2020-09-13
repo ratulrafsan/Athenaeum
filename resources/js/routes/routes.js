@@ -2,6 +2,9 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import namedRoutes from "./namedRoutes";
 
+import landing from '../views/Landing';
+import home from '../views/Home'
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -33,7 +36,21 @@ const routes = [
     {
         path: namedRoutes.addBook,
         name: 'add_book',
+        props: true,
         component: () => import('../views/AddBook')
+    },
+
+    {
+        path: namedRoutes.manageUser,
+        name: 'manage_user',
+        component: () => import('../views/Users')
+    },
+
+    {
+        path: namedRoutes.addUser,
+        name: 'add_user',
+        props: true,
+        component: () => import('../views/AddUser')
     }
 ]
 

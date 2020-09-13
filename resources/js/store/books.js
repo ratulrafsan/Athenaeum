@@ -1,6 +1,9 @@
 import mutationTypes from './mutation-types';
+import getterTypes from './getter-types';
 import axios from '../http/axios';
 import {V1API} from  '../http/APIPath';
+import router from "../routes/routes";
+import namedRoutes from "../routes/namedRoutes";
 
 export default {
     namespaced: true,
@@ -10,14 +13,19 @@ export default {
         hasError: false,
         query: undefined,
 
+        notificationTimeout: 10000,
+
         newBookProcessing: false,
         newBookError: false,
+        newBookSuccess: false,
 
         updateBookProcessing: false,
         updateBookError: false,
+        updateBookSuccess: false,
 
         deleteBookProcessing: false,
         deleteBookError: false,
+        deleteBookSuccess: false,
     },
 
     getters: {
@@ -32,10 +40,6 @@ export default {
             return state.books !== undefined;
         },
 
-        deleteBookProcessing: state => {
-            return state.deleteBookProcessing;
-        },
-
         books: state => {
             return state.books ? state.books: [];
         },
@@ -43,6 +47,42 @@ export default {
         count: state => {
             return state.books ? state.books.length : 0;
         },
+
+        [getterTypes.BOOK_NEW_PROCESSING] : state => {
+            return state.newBookProcessing;
+        },
+
+        [getterTypes.BOOK_NEW_SUCCESS] : state => {
+            return state.newBookSuccess;
+        },
+
+        [getterTypes.BOOK_UPDATE_PROCESSING] : state => {
+            return state.updateBookProcessing;
+        },
+
+        [getterTypes.BOOK_UPDATE_SUCCESS] : state => {
+            return state.updateBookSuccess;
+        },
+
+        [getterTypes.BOOK_DELETE_PROCESSING] : state => {
+            return state.deleteBookProcessing;
+        },
+
+        [getterTypes.BOOK_DELETE_SUCCESS] : state => {
+            return state.deleteBookSuccess;
+        },
+
+        [getterTypes.BOOK_DELETE_ERROR] : state => {
+            return state.deleteBookError;
+        },
+
+        [getterTypes.BOOK_UPDATE_ERROR] : state => {
+            return state.updateBookError;
+        },
+
+        [getterTypes.BOOK_NEW_ERROR] : state => {
+            return state.newBookError;
+        }
     },
 
     mutations: {
@@ -87,8 +127,16 @@ export default {
         },
 
         [mutationTypes.BOOK_UPDATE_SUCCESS] (state, success) {
-
+            state.updateBookSuccess = success;
         },
+
+        [mutationTypes.BOOK_NEW_SUCCESS] (state, success) {
+            state.newBookSuccess = success;
+        },
+
+        [mutationTypes.BOOK_DELETE_SUCCESS] (state, success) {
+            state.deleteBookSuccess = success;
+        }
 
     },
     actions: {
@@ -115,9 +163,10 @@ export default {
             }
         },
 
-        async addBook({commit}, payload) {
+        async addBook({commit,state}, payload) {
             commit(mutationTypes.BOOK_NEW_PROCESSING, true);
             commit(mutationTypes.BOOK_NEW_ERROR, false);
+            commit(mutationTypes.BOOK_NEW_SUCCESS, false);
 
             try{
                 let response = await axios.post(V1API.book, {
@@ -129,6 +178,9 @@ export default {
                     publisher: payload.publisher,
                     location: payload.location
                 });
+
+                commit(mutationTypes.BOOK_NEW_SUCCESS, true);
+                setTimeout(commit(mutationTypes.BOOK_NEW_SUCCESS, false), state.notificationTimeout);
             }catch(error) {
                 console.error(error);
                 commit(mutationTypes.BOOK_NEW_ERROR, true);
@@ -137,9 +189,10 @@ export default {
             }
         },
 
-        async updateBook({commit, dispatch}, payload) {
+        async updateBook({commit, dispatch, state}, payload) {
             commit(mutationTypes.BOOK_UPDATE_PROCESSING, true);
             commit(mutationTypes.BOOK_UPDATE_ERROR, false);
+            commit(mutationTypes.BOOK_UPDATE_SUCCESS, false);
 
             try{
                 let response = await axios.put(V1API.book, {
@@ -153,8 +206,10 @@ export default {
                     location: payload.location
                 });
 
+                commit(mutationTypes.BOOK_UPDATE_SUCCESS, true);
+                setTimeout(commit(mutationTypes.BOOK_UPDATE_SUCCESS, false), state.notificationTimeout);
                 dispatch('fetchBooks');
-
+                router.push(namedRoutes.home).catch(e=>console.log(e));
             }catch(error) {
                 console.error(error);
                 commit(mutationTypes.BOOK_UPDATE_ERROR, true);
@@ -162,10 +217,10 @@ export default {
                 commit(mutationTypes.BOOK_UPDATE_PROCESSING, false);
             }
         },
-        async deleteBook({commit, dispatch}, payload) {
+        async deleteBook({commit, dispatch, state}, payload) {
             commit(mutationTypes.BOOK_DELETE_PROCESSING, true);
             commit(mutationTypes.BOOK_DELETE_ERROR, false);
-            
+            commit(mutationTypes.BOOK_DELETE_SUCCESS, false);
             try{
                 let response = await axios.delete(V1API.book, {
                     data: {
@@ -173,6 +228,8 @@ export default {
                     }
                 });
 
+                commit(mutationTypes.BOOK_DELETE_SUCCESS,true);
+                setTimeout(commit(mutationTypes.BOOK_DELETE_SUCCESS, false), state.notificationTimeout);
                 dispatch('fetchBooks');
 
             }catch(error) {
