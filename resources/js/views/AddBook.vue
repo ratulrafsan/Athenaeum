@@ -7,7 +7,7 @@
             <v-card elevation="1" class="mt-10 mx-md-12">
                 <v-card-title> {{book ? 'Edit' : 'Add'}} Book </v-card-title>
                 <v-card-text>
-                    <v-form @submit.prevent="submitBook">
+                    <v-form @submit.prevent="submitBook" class="mx-8">
                         <v-row class="mx-1">
                             <v-text-field label="Book Title" v-model="payload.title"/>
                         </v-row>
@@ -21,7 +21,7 @@
                         </v-row>
 
                         <v-row>
-                            <v-col cols="12">
+                            <v-col cols="11">
                                 <v-autocomplete
                                     v-model="authors"
                                     :disabled="this[getters.AUTHOR_DATA_PROCESSING]"
@@ -45,10 +45,20 @@
                                     </template>
                                 </v-autocomplete>
                             </v-col>
+                            <v-col cols="1">
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{on, attrs}">
+                                        <v-btn icon v-bind="attrs" v-on="on" @click="showAddAuthor = !showAddAuthor">
+                                            <v-icon>mdi-plus-circle</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span> Add Author</span>
+                                </v-tooltip>
+                            </v-col>
                         </v-row>
 
                         <v-row>
-                            <v-col cols="12">
+                            <v-col cols="11">
                                 <v-autocomplete
                                     v-model="categories"
                                     :disabled="this[getters.CATEGORY_DATA_PROCESSING]"
@@ -71,6 +81,16 @@
                                         </v-chip>
                                     </template>
                                 </v-autocomplete>
+                            </v-col>
+                            <v-col class="1">
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{on, attrs}">
+                                        <v-btn icon v-bind="attrs" v-on="on" @click="showAddCategory = !showAddCategory">
+                                            <v-icon>mdi-plus-circle</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span> Add Category</span>
+                                </v-tooltip>
                             </v-col>
                         </v-row>
 
@@ -101,6 +121,14 @@
             </v-card>
         </v-container>
 
+        <v-dialog v-model="showAddAuthor" width="300">
+            <AddAuthor :close-callback="closeAddAuthorDialogue"/>
+        </v-dialog>
+
+        <v-dialog v-model="showAddCategory" width="300">
+            <AddCategory :close-callback="closeAddCategoryDialogue"/>
+        </v-dialog>
+
         <v-snackbar
             v-model="displaySuccessSnackbar"
             color="primary"
@@ -126,10 +154,12 @@
     import actionTypes from '../store/action-types';
     import auth from "../store/auth";
     import Toolbar from "../components/toolbar";
+    import AddAuthor from "../components/addAuthor";
+    import AddCategory from "../components/addCategory";
 
     export default {
         name: "AddBook",
-        components: {Toolbar},
+        components: {AddCategory, AddAuthor, Toolbar},
         props: {
             book: undefined
         },
@@ -188,7 +218,9 @@
                 shelf: undefined,
                 row: undefined,
 
-                drawer: null
+                drawer: null,
+                showAddAuthor: false,
+                showAddCategory: false,
             }
         },
 
@@ -250,7 +282,13 @@
                     this.$store.dispatch(actionTypes.update_book, this.payload);
                 }
             },
+            closeAddAuthorDialogue() {
+                this.showAddAuthor = !this.showAddAuthor;
+            },
 
+            closeAddCategoryDialogue() {
+                this.showAddCategory = !this.showAddCategory;
+            }
         }
     }
 </script>

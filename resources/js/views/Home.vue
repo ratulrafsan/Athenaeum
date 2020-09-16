@@ -18,7 +18,7 @@
                 </v-col>
             </v-row>
             <v-row justify="start" class="mx-2">
-                <p class="text-xl-h1" v-if="!shouldDisplayResult">
+                <p class="text-xl-h5" v-if="!shouldDisplayResult">
                     Search for books by book title, author name or ISBN
                 </p>
 
@@ -168,6 +168,7 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
+
 
     </v-main>
 </template>

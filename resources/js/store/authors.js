@@ -11,7 +11,10 @@ export default {
         hasLoadingError: false,
 
         newAuthorProcessing: false,
+        newAuthorSuccess: false,
         newAuthorError: false,
+
+        notificationTimeout: 10000,
     },
     getters: {
         [getterTypes.AUTHOR_DATA_PROCESSING]: state => state.loadProcessing,
@@ -36,6 +39,14 @@ export default {
 
         [mutationTypes.AUTHOR_NEW_ERROR] (state, hasError) {
             state.newAuthorError = hasError;
+        },
+
+        [mutationTypes.AUTHOR_NEW_SUCCESS] (state, success) {
+            state.newAuthorSuccess = success;
+        },
+
+        [mutationTypes.AUTHOR_PUSH_NEW] (state, newAuthor) {
+            state.authors.push(newAuthor);
         }
     },
     actions: {
@@ -63,7 +74,8 @@ export default {
                     author: payload
                 });
                 // Add the new author to the rest of the data
-                state.authors.push(response.data['author']);
+                commit(mutationTypes.AUTHOR_PUSH_NEW, response.data['author']);
+                commit(mutationTypes.AUTHOR_NEW_SUCCESS, true);
             } catch (error) {
                 console.error(error);
                 commit(mutationTypes.AUTHOR_NEW_ERROR, true);

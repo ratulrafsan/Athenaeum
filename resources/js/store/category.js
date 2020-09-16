@@ -12,6 +12,9 @@ export default {
 
         newCategoryProcessing: false,
         newCategoryError: false,
+        newCategorySuccess: false,
+
+        notificationTimeout: 10000,
     },
     getters: {
         [getterTypes.CATEGORY_DATA_PROCESSING]: state => state.loadProcessing,
@@ -36,6 +39,14 @@ export default {
 
         [mutationTypes.CATEGORY_NEW_ERROR] (state, hasError) {
             state.newCategoryError = hasError;
+        },
+
+        [mutationTypes.CATEGORY_NEW_SUCCESS] (state, success) {
+            state.newCategorySuccess = success;
+        },
+
+        [mutationTypes.CATEGORY_PUSH_NEW] (state, newCategory) {
+            state.categories.push(newCategory);
         }
     },
     actions: {
@@ -63,7 +74,9 @@ export default {
                     category: payload
                 });
                 // Add the new category to the rest of the data
-                state.categories.push(response.data['category']);
+                // state.categories.push(response.data['category']);
+                commit(mutationTypes.CATEGORY_PUSH_NEW, response.data['category']);
+                commit(mutationTypes.CATEGORY_NEW_SUCCESS, true);
             } catch (error) {
                 console.error(error);
                 commit(mutationTypes.CATEGORY_NEW_ERROR, true);
