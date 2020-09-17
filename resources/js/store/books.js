@@ -140,6 +140,14 @@ export default {
 
     },
     actions: {
+        closeSuccessSnackbar({commit}) {
+            commit(mutationTypes.BOOK_NEW_SUCCESS, false);
+            commit(mutationTypes.BOOK_UPDATE_SUCCESS, false);
+        },
+        closeErrorSnackbar({commit}){
+            commit(mutationTypes.BOOK_NEW_ERROR, false);
+            commit(mutationTypes.BOOK_UPDATE_ERROR, false);
+        },
         async fetchBooks({commit, state}, payload) {
             commit(mutationTypes.BOOK_ERROR, false);
             commit(mutationTypes.BOOK_PROCESSING, true);
@@ -180,7 +188,8 @@ export default {
                 });
 
                 commit(mutationTypes.BOOK_NEW_SUCCESS, true);
-                setTimeout(commit(mutationTypes.BOOK_NEW_SUCCESS, false), state.notificationTimeout);
+                console.log(response.data);
+                // setTimeout(commit(mutationTypes.BOOK_NEW_SUCCESS, false), state.notificationTimeout);
             }catch(error) {
                 console.error(error);
                 commit(mutationTypes.BOOK_NEW_ERROR, true);
@@ -207,7 +216,7 @@ export default {
                 });
 
                 commit(mutationTypes.BOOK_UPDATE_SUCCESS, true);
-                setTimeout(commit(mutationTypes.BOOK_UPDATE_SUCCESS, false), state.notificationTimeout);
+                // setTimeout(commit(mutationTypes.BOOK_UPDATE_SUCCESS, false), state.notificationTimeout);
                 dispatch('fetchBooks');
                 router.push(namedRoutes.home).catch(e=>console.log(e));
             }catch(error) {

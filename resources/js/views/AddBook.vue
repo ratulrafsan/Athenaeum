@@ -188,7 +188,7 @@
                 },
 
                 set(val) {
-                    // nothing
+                    this.$store.dispatch(actionTypes.book_close_success_snackbar);
                 }
             },
             displayErrorSnackbar: {
@@ -196,7 +196,7 @@
                     return this[namedGetters.BOOK_NEW_ERROR] || this[namedGetters.BOOK_UPDATE_ERROR];
                 },
                 set(val) {
-                    //nothing
+                    this.$store.dispatch(actionTypes.book_close_error_snackbar);
                 }
             }
         },

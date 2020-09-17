@@ -11,5 +11,9 @@ export default {
             state.role = role;
         }
     },
-    actions: {}
+    actions: {
+        async setRole({commit}, payload) {
+            commit('setRole', payload);
+        }
+    }
 }

@@ -6,6 +6,9 @@ export default {
     update_book : 'book/updateBook',
     delete_book : 'book/deleteBook',
     load_authors : 'author/fetchAuthors',
+    book_close_success_snackbar: 'book/closeSuccessSnackbar',
+    book_close_error_snackbar: 'book/closeErrorSnackbar',
+
     add_author: 'author/createAuthor',
     load_categories: 'category/fetchCategories',
     add_category: 'category/createCategory',
