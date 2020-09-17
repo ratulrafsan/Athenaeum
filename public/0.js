@@ -402,14 +402,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       get: function get() {
         return this[_store_getter_types__WEBPACK_IMPORTED_MODULE_1___default.a.BOOK_NEW_SUCCESS] || this[_store_getter_types__WEBPACK_IMPORTED_MODULE_1___default.a.BOOK_UPDATE_SUCCESS];
       },
-      set: function set(val) {// nothing
+      set: function set(val) {
+        this.$store.dispatch(_store_action_types__WEBPACK_IMPORTED_MODULE_3__["default"].book_close_success_snackbar);
       }
     },
     displayErrorSnackbar: {
       get: function get() {
         return this[_store_getter_types__WEBPACK_IMPORTED_MODULE_1___default.a.BOOK_NEW_ERROR] || this[_store_getter_types__WEBPACK_IMPORTED_MODULE_1___default.a.BOOK_UPDATE_ERROR];
       },
-      set: function set(val) {//nothing
+      set: function set(val) {
+        this.$store.dispatch(_store_action_types__WEBPACK_IMPORTED_MODULE_3__["default"].book_close_error_snackbar);
       }
     }
   }),
