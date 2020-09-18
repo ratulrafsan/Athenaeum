@@ -141,8 +141,19 @@ export default {
 
         [mutationTypes.BOOK_DELETE_SUCCESS] (state, success) {
             state.deleteBookSuccess = success;
-        }
+        },
 
+        [mutationTypes.BOOK_IMPORT_SUCCESS] (state ,success) {
+            state.importSuccess = success;
+        },
+
+        [mutationTypes.BOOK_IMPORT_PROCESSING] (state, isProcessing) {
+            state.importProcessing = isProcessing;
+        },
+
+        [mutationTypes.BOOK_IMPORT_ERROR] (state, hasError) {
+            state.importError = hasError;
+        }
     },
     actions: {
         closeSuccessSnackbar({commit}) {

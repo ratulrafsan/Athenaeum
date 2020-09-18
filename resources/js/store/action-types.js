@@ -5,6 +5,7 @@ export default {
     add_book : 'book/addBook',
     update_book : 'book/updateBook',
     delete_book : 'book/deleteBook',
+    import_book : 'book/importBook',
     load_authors : 'author/fetchAuthors',
     book_close_success_snackbar: 'book/closeSuccessSnackbar',
     book_close_error_snackbar: 'book/closeErrorSnackbar',

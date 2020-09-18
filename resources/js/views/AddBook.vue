@@ -6,7 +6,7 @@
         <v-container>
             <v-row>
                 <v-spacer></v-spacer>
-                <v-btn color="primary">
+                <v-btn color="primary" class="mr-4" @click="showImportDialogue = !showImportDialogue">
                     Import From Excel
                 </v-btn>
             </v-row>
@@ -140,7 +140,7 @@
                 <v-file-input show-size accept=".xlsx" label="XLSX Excel File" @change="selectExcelFile"></v-file-input>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" @click="showImportDialogue = !showImportDialogue"> Submit </v-btn>
+                    <v-btn color="primary" :loading="importProcessing" @click="submitFile"> Submit </v-btn>
                     <v-btn color="warning" @click="showImportDialogue = !showImportDialogue"> Close </v-btn>
                 </v-card-actions>
             </v-card>
@@ -165,7 +165,7 @@
 </template>
 
 <script>
-    import { mapGetters } from "vuex";
+    import { mapGetters, mapState } from "vuex";
     import namedGetters from '../store/getter-types';
     import moduleTypes from '../store/module-types';
     import actionTypes from '../store/action-types';
@@ -192,6 +192,7 @@
         },
 
         computed: {
+            ...mapState(moduleTypes.BOOK, ['importProcessing', 'importError', 'importSuccess']),
             ...mapGetters(moduleTypes.AUTHOR, [namedGetters.AUTHOR_DATA_PROCESSING, namedGetters.AUTHOR_DATA]),
             ...mapGetters(moduleTypes.CATEGORY, [namedGetters.CATEGORY_DATA_PROCESSING, namedGetters.CATEGORY_DATA]),
             ...mapGetters(moduleTypes.BOOK, [namedGetters.BOOK_UPDATE_SUCCESS, namedGetters.BOOK_UPDATE_PROCESSING,
@@ -201,7 +202,7 @@
             getters: () => require('../store/getter-types'),
             displaySuccessSnackbar: {
                 get() {
-                    return this[namedGetters.BOOK_NEW_SUCCESS] || this[namedGetters.BOOK_UPDATE_SUCCESS];
+                    return this[namedGetters.BOOK_NEW_SUCCESS] || this[namedGetters.BOOK_UPDATE_SUCCESS] || this.importSuccess;
                 },
 
                 set(val) {
@@ -210,7 +211,7 @@
             },
             displayErrorSnackbar: {
                 get() {
-                    return this[namedGetters.BOOK_NEW_ERROR] || this[namedGetters.BOOK_UPDATE_ERROR];
+                    return this[namedGetters.BOOK_NEW_ERROR] || this[namedGetters.BOOK_UPDATE_ERROR] || this.importError;
                 },
                 set(val) {
                     this.$store.dispatch(actionTypes.book_close_error_snackbar);
@@ -306,7 +307,8 @@
                 this.selectedFile = file;
             },
             submitFile() {
-
+                if(!this.selectedFile) return;
+                this.$store.dispatch(actionTypes.import_book, this.selectedFile);
             },
 
             closeAddAuthorDialogue() {
