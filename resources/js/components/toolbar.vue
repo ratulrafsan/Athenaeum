@@ -2,7 +2,7 @@
     <div>
         <v-toolbar color="success" flat>
             <v-app-bar-nav-icon  @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
-            <v-toolbar-title class="pt-3 pl-sm-10">
+            <v-toolbar-title class="pt-3 pl-sm-10" @click="$router.push('/home')">
                 <v-img src="https://i.imgur.com/QtNlFK7.png" aspect-ratio="21/9" height="60" width="140"/>
             </v-toolbar-title>
             <v-spacer class="hidden-sm-and-down" />
