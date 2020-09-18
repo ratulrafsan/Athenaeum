@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -22,6 +23,11 @@ class UserController extends Controller
         $user = User::findOrFail($request->id);
 
         $input = $request->all();
+
+        // If password update is requested then hash the new password
+        if($request->exists('password')) {
+            $input['password'] = Hash::make($request->password);
+        }
 
         unset($input['id']);
 

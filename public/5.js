@@ -1,1 +1,1 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[5],{525:function(n,t,e){"use strict";e.r(t);var c={name:"Contact"},a=e(29),s=Object(a.a)(c,(function(){var n=this.$createElement;return(this._self._c||n)("div",[this._v("\n    contact page\n")])}),[],!1,null,"6708ccea",null);t.default=s.exports}}]);
+(window.webpackJsonp=window.webpackJsonp||[]).push([[5],{525:function(e,n,t){"use strict";t.r(n);var a={name:"Contact"},c=t(29),s=Object(c.a)(a,(function(){var e=this.$createElement;return(this._self._c||e)("div")}),[],!1,null,"3ba938ce",null);n.default=s.exports}}]);

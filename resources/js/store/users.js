@@ -70,6 +70,10 @@ export default {
 
         [mutationTypes.USERS_ADD_SUCCESS] (state, success) {
             state.addUserSuccess = success;
+        },
+
+        [mutationTypes.USERS_EDIT_SUCCESS] (state, success) {
+            state.editSuccess = success;
         }
     },
     actions: {

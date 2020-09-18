@@ -31,7 +31,7 @@
                             </v-col>
                         </v-row>
 
-                        <v-row v-if="!user">
+                        <v-row>
                             <v-col cols="12">
                                 <v-text-field label="Password" type="password" v-model="payload.password"/>
                             </v-col>
