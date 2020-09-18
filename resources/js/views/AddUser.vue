@@ -49,24 +49,55 @@
                 </v-card-actions>
             </v-card>
         </v-container>
+
+        <v-snackbar
+            v-model="showSuccessToast"
+            color="primary"
+            right
+            :timeout="$store.state.book.notificationTimeout"
+        >
+            Operation completed successfully
+        </v-snackbar>
+
+        <v-snackbar
+            v-model="showErrorToast"
+            color="red" right :timeout="$store.state.book.notificationTimeout">
+            Operation failed..
+        </v-snackbar>
+
     </v-main>
 </template>
 
 <script>
     import Toolbar from "../components/toolbar";
     import namedRoutes from "../routes/namedRoutes";
+    import {mapState} from "vuex";
+    import namedModule from '../store/module-types';
+    import namedMutations from '../store/named-mutations';
+    import namedActions from '../store/action-types';
+
     export default {
         name: "AddUser",
         components: {Toolbar},
         props: ['user'],
         computed: {
+            ...mapState(namedModule.USERS, ['editSuccess', 'editError', 'addUserError', 'addUserSuccess']),
             showSuccessToast: {
                 get() {
-
+                    return this.editSuccess || this.addUserSuccess;
                 },
 
                 set() {
+                    this.$store.dispatch(namedActions.users_close_success_snackbar);
+                }
+            },
 
+            showErrorToast: {
+                get() {
+                    return this.editError || this.addUserError;
+                },
+                set() {
+                    this.$store.dispatch(namedActions.users_close_error_snackbar);
                 }
             }
         },

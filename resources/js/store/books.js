@@ -4,6 +4,7 @@ import axios from '../http/axios';
 import {V1API} from  '../http/APIPath';
 import router from "../routes/routes";
 import namedRoutes from "../routes/namedRoutes";
+import {fromHex} from "vuetify/lib/components/VColorPicker/util";
 
 export default {
     namespaced: true,
@@ -26,6 +27,10 @@ export default {
         deleteBookProcessing: false,
         deleteBookError: false,
         deleteBookSuccess: false,
+
+        importProcessing: false,
+        importError: false,
+        importSuccess: false,
     },
 
     getters: {
@@ -143,11 +148,34 @@ export default {
         closeSuccessSnackbar({commit}) {
             commit(mutationTypes.BOOK_NEW_SUCCESS, false);
             commit(mutationTypes.BOOK_UPDATE_SUCCESS, false);
+            commit(mutationTypes.BOOK_IMPORT_SUCCESS, false);
         },
         closeErrorSnackbar({commit}){
             commit(mutationTypes.BOOK_NEW_ERROR, false);
             commit(mutationTypes.BOOK_UPDATE_ERROR, false);
+            commit(mutationTypes.BOOK_IMPORT_ERROR, false);
         },
+        async importBook({commit}, payload) {
+            commit(mutationTypes.BOOK_IMPORT_ERROR, false);
+            commit(mutationTypes.BOOK_IMPORT_PROCESSING, true);
+
+            try{
+                let formData = new FormData();
+                formData.append("excel_file", payload);
+
+                let response = await axios.post(V1API.import_book, formData, {headers: {
+                        "Content-Type": "multipart/form-data"
+                    }});
+
+                commit(mutationTypes.BOOK_IMPORT_SUCCESS, true);
+            }catch (e) {
+                console.error(e);
+                commit(mutationTypes.BOOK_IMPORT_ERROR, true);
+            }finally {
+                commit(mutationTypes.BOOK_IMPORT_PROCESSING, false);
+            }
+        },
+
         async fetchBooks({commit, state}, payload) {
             commit(mutationTypes.BOOK_ERROR, false);
             commit(mutationTypes.BOOK_PROCESSING, true);

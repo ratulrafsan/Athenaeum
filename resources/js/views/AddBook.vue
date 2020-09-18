@@ -4,6 +4,12 @@
         <toolbar/>
 
         <v-container>
+            <v-row>
+                <v-spacer></v-spacer>
+                <v-btn color="primary">
+                    Import From Excel
+                </v-btn>
+            </v-row>
             <v-card elevation="1" class="mt-10 mx-md-12">
                 <v-card-title> {{book ? 'Edit' : 'Add'}} Book </v-card-title>
                 <v-card-text>
@@ -129,6 +135,17 @@
             <AddCategory :close-callback="closeAddCategoryDialogue"/>
         </v-dialog>
 
+        <v-dialog v-model="showImportDialogue" width="300">
+            <v-card class="pa-4">
+                <v-file-input show-size accept=".xlsx" label="XLSX Excel File" @change="selectExcelFile"></v-file-input>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="primary" @click="showImportDialogue = !showImportDialogue"> Submit </v-btn>
+                    <v-btn color="warning" @click="showImportDialogue = !showImportDialogue"> Close </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
         <v-snackbar
             v-model="displaySuccessSnackbar"
             color="primary"
@@ -221,6 +238,9 @@
                 drawer: null,
                 showAddAuthor: false,
                 showAddCategory: false,
+                showImportDialogue: false,
+
+                selectedFile: undefined,
             }
         },
 
@@ -282,6 +302,13 @@
                     this.$store.dispatch(actionTypes.update_book, this.payload);
                 }
             },
+            selectExcelFile(file) {
+                this.selectedFile = file;
+            },
+            submitFile() {
+
+            },
+
             closeAddAuthorDialogue() {
                 this.showAddAuthor = !this.showAddAuthor;
             },

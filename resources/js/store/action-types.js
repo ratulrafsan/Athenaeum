@@ -15,5 +15,7 @@ export default {
 
     load_users: 'users/getUsers',
     delete_user : 'users/deleteUser',
-    updateUser : 'users/updateUser'
+    updateUser : 'users/updateUser',
+    users_close_success_snackbar: 'users/close_success_snackbar',
+    users_close_error_snackbar: 'users/close_error_snackbar'
 }

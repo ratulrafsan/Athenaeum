@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Book;
 use App\BookAuthor;
+use App\Category;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use function Sodium\add;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BookController extends Controller
 {
@@ -142,5 +143,57 @@ class BookController extends Controller
 
         return $deleteStatus ? $this->success('Operation success', ['book' => null]) :
             $this->err('Book could not be deleted');
+    }
+
+    public function importExcel(Request $request) {
+        $request->validate(['excel_file' => 'required|mimes:xlsx']);
+
+        $data = ( Excel::toCollection(null, $request->file('excel_file'))->first())->toArray();
+
+        $data = array_slice($data, 1);
+
+        $ret = [];
+        DB::transaction(function () use ($data, &$ret) {
+            foreach ($data as $entry) {
+                // Create book entry
+                $title = $entry[1];
+                $language = $entry[4];
+                $isbn = $entry[5];
+                $publisher = $entry[6];
+                $location = 'Shelf: '.$entry[7]. ", Row: ".$entry[8];
+
+                $book = Book::create([
+                    'title' => $title,
+                    'language' => $language,
+                    'isbn' => $isbn,
+                    'location' => $location,
+                    'publisher' => $publisher
+                ]);
+
+                // Find or create category entries
+                $all_cat = explode(',', $entry[3]);
+                $cat_string = array_map(function ($v) {return trim($v); }, $all_cat);
+                $cats = array_map(function($v) {
+                    return Category::firstOrCreate(['category' => $v])->id;
+                }, $cat_string);
+
+                // Find or create author entries
+                $all_auth = explode(',', $entry[2]);
+                $auth_string = array_map(function ($v) {return trim($v);}, $all_auth);
+                $auths = array_map(function ($v) {
+                   return BookAuthor::firstOrCreate(['author' => $v])->id;
+                }, $auth_string);
+
+                $book->categories()->sync($cats);
+                $book->author()->sync($auths);
+
+                $book->save();
+
+                array_push($ret, $book);
+            }
+        });
+
+        return count($ret) > 0 ? $this->success('Data imported', ['books' => $ret]) :
+        $this->err('failed');
     }
 }

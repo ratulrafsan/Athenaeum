@@ -20,6 +20,8 @@ export default {
         addUserProcessing: false,
         addUserError: false,
         addUserSuccess: false,
+
+        notificationTimeout: 20000
     },
     mutations: {
         [mutationTypes.USERS_SET_DATA] (state, payload) {
@@ -71,6 +73,19 @@ export default {
         }
     },
     actions: {
+        close_success_snackbar({commit}) {
+            commit(mutationTypes.USERS_ADD_SUCCESS, false);
+            commit(mutationTypes.USERS_DELETE_SUCCESS, false);
+            commit(mutationTypes.USERS_EDIT_SUCCESS, false);
+        },
+
+        close_error_snackbar({commit}) {
+            commit(mutationTypes.USERS_ADD_ERROR, false);
+            commit(mutationTypes.USERS_DELETE_ERROR, false);
+            commit(mutationTypes.USERS_EDIT_ERROR, false);
+            commit(mutationTypes.USERS_FETCH_ERROR, false);
+        },
+
         async getUsers({commit}) {
             commit(mutationTypes.USERS_FETCH_PROCESSING, true);
             commit(mutationTypes.USERS_FETCH_ERROR, false);

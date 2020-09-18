@@ -33,6 +33,7 @@ Route::middleware('auth:api')->group(function() {
     Route::post('/book', 'BookController@addBook');
     Route::put('/book', 'BookController@editBook');
     Route::delete('/book', 'BookController@deleteBook');
+    Route::post('/book/import', 'BookController@importExcel');
 
     Route::get('/category', 'CategoryController@index');
     Route::post('/category', 'CategoryController@add');
