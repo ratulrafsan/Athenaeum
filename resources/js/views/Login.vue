@@ -50,9 +50,7 @@
                             <v-row justify="center" align="center" class="mt-n2">
                                 <p class="text-body-1"> Don't have an account?
                                     <span class="primary--text">
-                                        <router-link :to="toContactPage()">
-                                            Contact Us.
-                                        </router-link>
+                                        <a href="mailto:contact@shaheenlibrary.com">Contact Us</a>
                                     </span>
                                 </p>
                             </v-row>

@@ -298,13 +298,13 @@
             parseCategoryChart(data) {
                 let values = [];
                 data.forEach((e) => values.push(Object.values(e)));
-                this.category = values.slice(0, 30);
+                this.category = values;
             },
 
             parseLanguageChart(data) {
                 let values = [];
                 data.forEach(e => values.push(Object.values(e)));
-                this.language = values.slice(0, 10);
+                this.language = values;
             }
 
         }

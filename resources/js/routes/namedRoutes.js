@@ -1,4 +1,5 @@
 export default {
+    'landing' : '/',
     'login' : '/login',
     'contact' : '/contact',
     'register' : '/register',

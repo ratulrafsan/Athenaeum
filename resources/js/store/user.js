@@ -4,7 +4,9 @@ export default {
         role: undefined
     },
     getters: {
-      isAdmin : state => state.role === 1
+      isAdmin : state => {
+          return state.role === 1 || state.role === "1";
+      }
     },
     mutations: {
         setRole (state ,role) {

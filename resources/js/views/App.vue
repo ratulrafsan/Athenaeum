@@ -16,13 +16,10 @@
         created() {
             // Load user information from local storage
             let encodedUserData = localStorage.getItem(constants.LocalStorageKeys.USER);
-            if(!encodedUserData) {
-                this.$store.dispatch(namedActions.logout);
-                return;
+            if(encodedUserData) {
+                let userInfo = JSON.parse(encodedUserData);
+                this.$store.dispatch('user/setRole', userInfo['role']);
             }
-
-            let userInfo = JSON.parse(encodedUserData);
-            this.$store.dispatch('user/setRole', userInfo['role']);
         }
     }
 </script>
