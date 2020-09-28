@@ -1,1 +1,1 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[5],{524:function(n,t,e){"use strict";e.r(t);var a={name:"Contact"},c=e(29),s=Object(c.a)(a,(function(){var n=this.$createElement;return(this._self._c||n)("div")}),[],!1,null,"90a69f40",null);t.default=s.exports}}]);
+(window.webpackJsonp=window.webpackJsonp||[]).push([[5],{525:function(n,t,e){"use strict";e.r(t);var a={name:"Contact"},c=e(29),s=Object(c.a)(a,(function(){var n=this.$createElement;return(this._self._c||n)("div")}),[],!1,null,"90a69f40",null);t.default=s.exports}}]);

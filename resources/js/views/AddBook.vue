@@ -13,7 +13,7 @@
             <v-card elevation="1" class="mt-10 mx-md-12">
                 <v-card-title> {{book ? 'Edit' : 'Add'}} Book </v-card-title>
                 <v-card-text>
-                    <v-form @submit.prevent="submitBook" class="mx-8">
+                    <v-form @submit.prevent="() => {}" class="mx-8">
                         <v-row class="mx-1">
                             <v-text-field label="Book Title" v-model="payload.title"/>
                         </v-row>

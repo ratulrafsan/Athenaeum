@@ -97,6 +97,8 @@ export default {
             try{
                 let response = await http.get(V1API.users);
 
+                // Some weird bug converts the role type from int to string. Probably has to with the db being older version
+
                 commit(mutationTypes.USERS_SET_DATA, response.data);
             }catch(error){
                 console.error(error);

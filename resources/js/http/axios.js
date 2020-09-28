@@ -27,7 +27,10 @@ http.interceptors.response.use(
         const originalRequest = config;
 
         if(response && response.status === 401) {
-            await store.dispatch(namedActions.logout);
+            // If we are not on the login page then dispatch logout
+            if(router.history.current.path !== namedRoutes.login) {
+                await store.dispatch(namedActions.logout);
+            }
         }
 
         return Promise.reject(error);

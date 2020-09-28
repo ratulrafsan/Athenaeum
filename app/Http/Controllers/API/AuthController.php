@@ -34,6 +34,8 @@ class AuthController extends Controller
         //get the current user
         $user = Auth::user();
 
+        // Something is causing the role to be incorrectly type casted. I'm blaming the database -_-
+        $role = (int) $user->role;
 
         // Only allow Admin users to create new users
         if($user->role !== 1) {

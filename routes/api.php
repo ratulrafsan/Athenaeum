@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', 'API\AuthController@login');
 Route::get('/stat', 'libraryStatus@index');
+//Route::get('/hashMe', function (Request $request) {
+//    return \Illuminate\Support\Facades\Hash::make($request->value);
+//});
 
 Route::middleware('auth:api')->group(function() {
     Route::post('/logout', 'API\AuthController@logout');

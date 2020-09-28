@@ -7,7 +7,7 @@
             <v-card>
                 <v-card-title> {{user ? 'Edit' : 'Add'}} user</v-card-title>
                 <v-card-text>
-                    <v-form class="pa-5" @submit.prevent="submitUser">
+                    <v-form class="pa-5" @submit.prevent="() => {}">
 
                         <v-row>
                             <v-col cols="12">
