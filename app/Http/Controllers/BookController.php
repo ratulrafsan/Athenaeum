@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Book;
 use App\BookAuthor;
+use App\BookHash;
 use App\Category;
+use App\Exports\Books;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +74,7 @@ class BookController extends Controller
         ]);
 
         $toReturn = null;
+        $book = null;
 
         DB::transaction(function () use ($request, &$toReturn) {
             $toReturn = Book::create([
@@ -84,6 +87,8 @@ class BookController extends Controller
 
             $toReturn->author()->sync($request->author);
             $toReturn->categories()->sync($request->category);
+
+            $this->addBookHashEntry($toReturn);
         });
 
         if($toReturn != null) {
@@ -137,6 +142,8 @@ class BookController extends Controller
         DB::transaction(function () use ($request, &$targetBook, &$deleteStatus) {
             $targetBook->author()->detach();
             $targetBook->categories()->detach();
+            $hash = BookHash::find($request->id);
+            $hash->delete();
 
             $deleteStatus = $targetBook->delete();
         });
@@ -145,12 +152,52 @@ class BookController extends Controller
             $this->err('Book could not be deleted');
     }
 
+//    public function importExcel2(Request $request) {
+//        $request->validate(['excel_file' => 'required|mimes:xlsx']);
+//
+//        $data = ( Excel::toCollection(null, $request->file('excel_file'))->first())->toArray();
+//        $data = array_slice($data, 1);
+//
+//        // If assoc 9 -> hash is not set then assume that this is the fresh one we have to generate new hash
+//
+//    }
+
+    public function exportExcel(Request $request) {
+        return Excel::download(new Books(), 'books.xlsx');
+    }
+
     public function importExcel(Request $request) {
         $request->validate(['excel_file' => 'required|mimes:xlsx']);
+
+        $onDbData = Book::query()->select(
+            [
+                'books.id',
+                'books.title',
+                'books.publisher',
+                'books.isbn',
+                'books.language',
+                'books.location',
+                DB::raw(
+                    'GROUP_CONCAT(DISTINCT authors.author) as author,
+                    GROUP_CONCAT(DISTINCT categories.category) as category'
+                )
+            ])
+            ->leftJoin('book_authors', 'book_authors.book_id', '=', 'books.id')
+            ->leftJoin('authors', 'book_authors.author_id', '=', 'authors.id')
+            ->leftJoin('book_categories', 'book_categories.book_id', '=', 'books.id')
+            ->leftJoin('categories', 'book_categories.category_id', '=', 'categories.id')
+            ->groupBy('books.id')->get();
+
+        $excelData = Excel::toCollection(null, $request->file('excel_file'))->first();
+
+        $excelData->diff($onDbData);
+
 
         $data = ( Excel::toCollection(null, $request->file('excel_file'))->first())->toArray();
 
         $data = array_slice($data, 1);
+
+
 
         $ret = [];
         DB::transaction(function () use ($data, &$ret) {
@@ -187,6 +234,10 @@ class BookController extends Controller
                 $book->categories()->sync($cats);
                 $book->author()->sync($auths);
 
+
+                $this->addBookHashEntry($book);
+
+
                 $book->save();
 
                 array_push($ret, $book);
@@ -195,5 +246,42 @@ class BookController extends Controller
 
         return count($ret) > 0 ? $this->success('Data imported', ['books' => $ret]) :
         $this->err('failed');
+    }
+
+    public function addBookHashEntry($toReturn): void
+    {
+        $bookData = Book::query()->select(
+            [
+                'books.id',
+                'books.title',
+                'books.publisher',
+                'books.isbn',
+                'books.language',
+                'books.location',
+                DB::raw(
+                    'GROUP_CONCAT(DISTINCT authors.author) as author,
+                    GROUP_CONCAT(DISTINCT categories.category) as category'
+                )
+            ])
+            ->leftJoin('book_authors', 'book_authors.book_id', '=', 'books.id')
+            ->leftJoin('authors', 'book_authors.author_id', '=', 'authors.id')
+            ->leftJoin('book_categories', 'book_categories.book_id', '=', 'books.id')
+            ->leftJoin('categories', 'book_categories.category_id', '=', 'categories.id')
+            ->where('books.id', '=', $toReturn->id)
+            ->groupBy('books.id')->get()->toArray()[0];
+
+        $shelf_row = explode(",", $bookData['location']);
+        $bookhash = BookHash::firstOrCreate([
+            'book_id' => $bookData['id'],
+            'row_id' => $bookData['id'],
+            'title' => $bookData['title'],
+            'authors' => $bookData['author'],
+            'categories' => $bookData['category'],
+            'language' => $bookData['category'],
+            'isbn' => $bookData['isbn'],
+            'publisher' => $bookData['publisher'],
+            'shelf' => explode(" ", $shelf_row[0])[1],
+            'row' => explode(" ", trim($shelf_row[1]))[1],
+        ]);
     }
 }

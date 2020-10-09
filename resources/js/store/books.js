@@ -210,6 +210,20 @@ export default {
             }
         },
 
+        async exportBook({commit}) {
+            try{
+                let response = await axios.get(V1API.export_book, {responseType: 'arraybuffer'});
+                let fileName = response.headers["content-disposition"].split("filename=")[1];
+                let blob = new Blob([response.data], {type:'application/*'})
+                let link = document.createElement('a')
+                link.href = window.URL.createObjectURL(blob)
+                link.download = fileName;
+                link.click();
+            }catch (e) {
+                console.error(e);
+            }
+        },
+
         async addBook({commit,state}, payload) {
             commit(mutationTypes.BOOK_NEW_PROCESSING, true);
             commit(mutationTypes.BOOK_NEW_ERROR, false);

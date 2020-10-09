@@ -14,14 +14,12 @@ class Books extends Migration
     public function up()
     {
         Schema::create('books', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->bigIncrements('id')->autoIncrement();
             $table->string('title', 256);
-            $table->string('isbn');
-            $table->string('language');
-            $table->string('publisher');
-            $table->string('location');
-
-
+            $table->string('isbn')->unique()->nullable();
+            $table->string('language')->nullable();
+            $table->string('publisher')->nullable();
+            $table->string('location')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
         });

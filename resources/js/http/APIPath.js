@@ -7,6 +7,7 @@ module.exports = {
         'search_books' : '/api/book/search',
         'book' : '/api/book',
         'import_book' : '/api/book/import',
+        'export_book' : '/api/book/export',
         'category' : '/api/category',
         'author' : '/api/author',
         'users' : '/api/user',

@@ -37,6 +37,7 @@ Route::middleware('auth:api')->group(function() {
     Route::put('/book', 'BookController@editBook');
     Route::delete('/book', 'BookController@deleteBook');
     Route::post('/book/import', 'BookController@importExcel');
+    Route::get('/book/export', 'BookController@exportExcel');
 
     Route::get('/category', 'CategoryController@index');
     Route::post('/category', 'CategoryController@add');

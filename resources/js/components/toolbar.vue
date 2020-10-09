@@ -7,6 +7,9 @@
             </v-toolbar-title>
             <v-spacer class="hidden-sm-and-down" />
             <v-toolbar-items class="hidden-sm-and-down" >
+                <v-btn class="font-weight-light" text x-large @click="$store.dispatch(require('../store/action-types').default.export_book)">
+                    Export Book-List
+                </v-btn>
                 <v-btn class="font-weight-light" text x-large :to="require('../routes/namedRoutes').default.addBook" v-if="$store.getters['user/isAdmin']">
                     Add Book
                 </v-btn>

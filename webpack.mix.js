@@ -12,7 +12,7 @@ mix.webpackConfig({
         },
     },
 })
-    .webpackConfig({ output: { filename: '[name].js', chunkFilename: 'js/[name].app.js', publicPath: '/' } });
+    // .webpackConfig({ output: { filename: '[name].js', chunkFilename: 'js/[name].app.js', publicPath: '/' } });
 
 /*
  |--------------------------------------------------------------------------
