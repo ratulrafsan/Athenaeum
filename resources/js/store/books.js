@@ -91,6 +91,10 @@ export default {
     },
 
     mutations: {
+        RESET_STATE (state) {
+            state.books = undefined;
+            state.query = undefined;
+        },
         [mutationTypes.BOOK_SET_DATA] (state, payload) {
             state.books = payload;
         },

@@ -127,10 +127,9 @@ class BookController extends Controller
             $targetBook->categories()->sync($request->category);
 
             $updateStatus = $targetBook->update($request->all());
+
+            $this->addBookHashEntry($targetBook->id, false);
         });
-
-        $this->addBookHashEntry($targetBook->id, false);
-
 
         return $updateStatus ? $this->success('Operation success', ['book' => $targetBook]) :
             $this->err('Book could not be updated');
@@ -148,15 +147,12 @@ class BookController extends Controller
         DB::transaction(function () use ($request, &$targetBook, &$deleteStatus) {
             $targetBook->author()->detach();
             $targetBook->categories()->detach();
-            $hash = BookHash::find($request->id);
-            $hash->delete();
-
-            $deleteStatus = $targetBook->delete();
 
             // Delete the book from the hash entry
-            $bookHash = BookHash::first(['book_id', $targetBook->id]);
+            $bookHash = BookHash::firstWhere('book_id', $targetBook->id);
             $bookHash->delete();
 
+            $deleteStatus = $targetBook->delete();
         });
 
         return $deleteStatus ? $this->success('Operation success', ['book' => null]) :
@@ -370,7 +366,7 @@ class BookController extends Controller
                 'hash' => $hash
             ]);
         }else{
-            $bookhash = BookHash::first('book_id', $bookData['id']);
+            $bookhash = BookHash::firstWhere('book_id', $bookData['id']);
 
             $bookhash->update([
                 'book_id' => $bookData['id'],

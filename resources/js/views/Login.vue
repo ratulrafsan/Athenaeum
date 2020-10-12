@@ -8,7 +8,7 @@
                         </v-card-title>
 
                         <v-card-text class="px-8">
-                            <v-form>
+                            <v-form @keyup.native.enter="attemptLogin">
                                 <v-text-field
                                     label="Login"
                                     name="login"
@@ -33,6 +33,7 @@
 <!--                            submit button -->
                             <v-row justify="center" align="center">
                                 <v-btn
+                                    type="submit"
                                     color="primary"
                                     :loading="loginInProgress"
                                     @click="attemptLogin"

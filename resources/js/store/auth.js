@@ -63,14 +63,13 @@ export default {
             commit(mutationTypes.AUTH_PROCESSING, false);
         },
 
-        async logout() {
+        async logout({commit}) {
             localStorage.removeItem(constants.LocalStorageKeys.USER);
             localStorage.removeItem(constants.LocalStorageKeys.TOKEN);
+            commit('book/RESET_STATE', null, {root: true});
             // redirect user back to login page
             // If we are already on the login page then do nothing
-            if(router.history.current.path !== namedRoutes.login) {
-                router.push({name: 'login', query: {to: router.history.current.fullPath}}).catch(e=>console.log(e));
-            }
+            router.push({name: 'login'}).catch(e=>console.log(e));
         }
     }
 }

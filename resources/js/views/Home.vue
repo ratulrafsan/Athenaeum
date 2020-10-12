@@ -7,7 +7,7 @@
         <v-container>
             <v-row justify="start">
                 <v-col cols="8">
-                    <v-form @submit.prevent="$store.dispatch(require('../store/action-types').default.search_books)">
+                    <v-form class="hidden-md-and-up" @keydown.native.enter.prevent="$store.dispatch(require('../store/action-types').default.search_books)">
                         <v-text-field
                             label="Search Here"
                             append-icon="mdi-arrow-right"
@@ -18,7 +18,7 @@
                 </v-col>
             </v-row>
             <v-row justify="start" class="mx-2">
-                <p class="text-xl-h5" v-if="!shouldDisplayResult">
+                <p class="text-xl-h5 hidden-md-and-up" v-if="!shouldDisplayResult">
                     Search for books by book title, author name or ISBN
                 </p>
 
