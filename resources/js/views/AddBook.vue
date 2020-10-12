@@ -223,13 +223,13 @@
             return {
                 payload: {
                     id: undefined,
-                    title: undefined,
-                    author: undefined,
-                    publisher: undefined,
-                    isbn: undefined,
-                    location: undefined,
-                    category: undefined,
-                    language: undefined
+                    title: '',
+                    author: [],
+                    publisher: '',
+                    isbn: '',
+                    location: '',
+                    category: [],
+                    language: ''
                 },
                 authors: [],
                 categories: [],
@@ -296,6 +296,7 @@
                 this.payload.location = `Shelf: ${this.shelf}, Row: ${this.row}`;
                 this.payload.author = this.authors;
                 this.payload.category = this.categories;
+                this.payload.publisher = this.payload.publisher ? this.payload.publisher : '';
 
                 if(!this.book) {
                     this.$store.dispatch(actionTypes.add_book, this.payload);

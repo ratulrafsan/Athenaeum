@@ -27,6 +27,7 @@ class BookHash extends Migration
             $table->string('publisher')->nullable();
             $table->string('shelf')->nullable();
             $table->string('row')->nullable();
+            $table->string('hash')->nullable();
         });
     }
 
